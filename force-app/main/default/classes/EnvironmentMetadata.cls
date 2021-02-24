@@ -55,6 +55,7 @@ global inherited sharing class EnvironmentMetadata {
         }
         return result;
     }
+
     global SObject get(String key) {
         return metadataIndex.get(key);
     }

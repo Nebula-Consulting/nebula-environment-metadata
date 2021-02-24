@@ -53,10 +53,17 @@ You can use any other metadata type by adding a Metadata Relationship field to y
 may then create multiple records of your type for each environment and use the Apex API to access the relevant ones for 
 your current environment. 
 
+## Matching values in environments
+
+Values in environments are matched by looking at their Environment reference and the Org Domain URL within it. 
+
+If there is a custom metadata record associated with an Environment that matches `Url.getOrgDomainUrl().toExternalForm()`,
+then that record is returned. If there is a record in an Environment with no Org Domain URL set, then that record is returned.
+
 ## Apex Interface
 
-Of course, you may query the metadata records directly. Convenience methods are provided to access properties which can
-give you all the metadata for the current environment or read a key at a time
+Of course, you may query the metadata records directly. Convenience methods are provided which respect the rules of 
+matching described above. The methods can give you all the metadata for the current environment or read a key at a time.
 
 ### Apex Interface: Properties
 
@@ -64,16 +71,12 @@ Metadata stored in the Property custom metadata type can be read via the [Enviro
 
     EnvironmentProperties.get('My_Label')
 
-If there is an exact match for this key, associated with an Environment that matches `Url.getOrgDomainUrl().toExternalForm()`,
-then that value is returned. If there is a key in an Environment with no Org Domain URL set, then that value is returned. If
-no key matches, `null` is returned.
-
 ### Apex Interface: Other Custom Metadata Types
 
 Custom metadata types that have added a reference to Environment can use [EnvironmentMetadata](force-app/main/default/classes/EnvironmentMetadata.cls)
 to access either all the metadata records for the current environment or a single record.
 
-The custom metadata type must have some notion of a key (it can be compound key across multiple fields), or else the 
+The custom metadata type must have a key (it can be compound key across multiple fields), or else the 
 notion of overriding doesn't make sense. When you construct an instance of EnvironmentMetadata, you must supply the 
 SObjectType of the metadata, and the key e.g.
 
@@ -83,3 +86,9 @@ EnvironmentMetadata will examine the types to find how it is linked to Environme
 values on the key:
 
     My_Type__mdt record = (My_Type__mdt)myEnvironmentMetadata.get(key);
+
+Or get all of them for this environment:
+
+    List<My_Type__mdt> records = myEnvironmentMetadata.getAll();
+
+The returned list will be for this environment and also unique based on your supplied key. 
