@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Org_Domain_URL__c</fullName>
+    <description>Should contain the content of Url.getOrgDomainUrl() for the target environment</description>
+    <externalId>false</externalId>
+    <fieldManageability>DeveloperControlled</fieldManageability>
+    <inlineHelpText>Should contain the content of Url.getOrgDomainUrl() for the target environment</inlineHelpText>
+    <label>Org Domain URL</label>
+    <required>false</required>
+    <type>Url</type>
+</CustomField>

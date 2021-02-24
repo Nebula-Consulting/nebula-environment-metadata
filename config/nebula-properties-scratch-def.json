@@ -1,0 +1,8 @@
+{
+  "orgName": "nebula-properties",
+  "description": "Allows for environment-specfic configuration of code + Flow",
+  "country": "GB",
+  "edition": "Developer",
+  "hasSampleData": false,
+  "features": []
+}
