@@ -6,28 +6,9 @@
 
 global inherited sharing class EnvironmentProperties {
 
-    @TestVisible
-    global static Map<String, String> properties {get; private set;}
+    private static EnvironmentMetadata environmentProperties = new EnvironmentMetadata(Property__mdt.SObjectType, Property__mdt.Key__c);
 
-    global List<SObject> getAll(SObjectType metadataType) {
-        return null;
-    }
-
-    static {
-        // Note: Custom Metadata can't order by NULLS FIRST, so we have to deal overriding defaults manually later
-        List<Property__mdt> propertyList = [
-                SELECT Key__c, Value__c, Environment__c, Environment__r.Org_Domain_URL__c
-                FROM Property__mdt
-                WHERE Environment__r.Org_Domain_URL__c = :Url.getOrgDomainUrl().toExternalForm()
-                OR Environment__r.Org_Domain_URL__c = NULL
-        ];
-
-        properties = new Map<String, String>();
-
-        for(Property__mdt thisProperty : propertyList) {
-            if(!properties.containsKey(thisProperty.Key__c) || thisProperty.Environment__r.Org_Domain_URL__c != null) {
-                properties.put(thisProperty.Key__c, thisProperty.Value__c);
-            }
-        }
+    global static String get(String key) {
+        return ((Property__mdt)environmentProperties.get(key))?.Value__c;
     }
 }
