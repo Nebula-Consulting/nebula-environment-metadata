@@ -17,7 +17,7 @@ global inherited sharing class EnvironmentMetadata {
         get {
             if(metadataIndex == null) {
                 metadataIndex = new SObjectIndex(keyFields)
-                        .putAll(dummyMetadataRecords != null ? dummyMetadataRecords : getMetadataRecords());
+                        .putAll(getMetadataRecords());
             }
             return metadataIndex;
         }
@@ -75,7 +75,7 @@ global inherited sharing class EnvironmentMetadata {
                 .firstOrDefault(null);
 
         // Note: Custom Metadata can't order by NULLS LAST, so we have to sort afterwards
-        List<SObject> metadataList = Database.query(
+        List<SObject> metadataList = dummyMetadataRecords != null ? dummyMetadataRecords : Database.query(
                 'SELECT ' + String.join(fields, ', ') + ', ' + orgDomainField
                         + ' FROM ' + metadataTypeDescribe.getName()
                         + ' WHERE ' + orgDomainField + ' = :orgDomainUrl'
