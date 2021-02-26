@@ -9,6 +9,7 @@ global inherited sharing class EnvironmentMetadata {
     public String orgDomainUrl = Url.getOrgDomainUrl().toExternalForm();
     private SObjectType metadataType;
     private List<String> keyFields;
+
     private SObjectIndex metadataIndex {get {
         if(metadataIndex == null) {
             metadataIndex = new SObjectIndex(keyFields);
@@ -48,6 +49,16 @@ global inherited sharing class EnvironmentMetadata {
         this.keyFields = new List<String>{ keyField.getDescribe().name };
     }
 
+    global EnvironmentMetadata addField(SObjectField field) {
+        keyFields.add(field.getDescribe().name);
+        return this;
+    }
+
+    global EnvironmentMetadata overrideEnvironment(String orgDomainUrl) {
+        this.orgDomainUrl = orgDomainUrl;
+        return this;
+    }
+
     global List<SObject> getAll() {
         List<SObject> result = new List<SObject>();
         for(String thisKey : (List<String>)metadataIndex.keyList(new List<String>())) {
@@ -56,7 +67,15 @@ global inherited sharing class EnvironmentMetadata {
         return result;
     }
 
-    global SObject get(String key) {
+    global SObject get(Object key) {
+        return metadataIndex.get(key);
+    }
+
+    global SObject get(SObject key) {
+        return metadataIndex.get(key);
+    }
+
+    global SObject get(Map<String, Object> key) {
         return metadataIndex.get(key);
     }
 }
