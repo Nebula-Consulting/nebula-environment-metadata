@@ -4,6 +4,6 @@
     <protected>false</protected>
     <values>
         <field>Org_Domain_URL__c</field>
-        <value xsi:type="xsd:string">https://site-saas-73992-dev-ed.cs18.my.salesforce.com</value>
+        <value xsi:type="xsd:string">https://match.my.salesforce.com</value>
     </values>
 </CustomMetadata>
