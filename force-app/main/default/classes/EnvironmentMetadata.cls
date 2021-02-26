@@ -1,43 +1,28 @@
 /**
  * @author aidan@nebulaconsulting.co.uk
  * @date 24/02/2021
- * @description (if required)
+ * @description Access custom metadata records that have a lookup to Environment__mdt according to matching the org
+ * domain url
  */
 
 global inherited sharing class EnvironmentMetadata {
 
-    public String orgDomainUrl = Url.getOrgDomainUrl().toExternalForm();
+    private String orgDomainUrl = Url.getOrgDomainUrl().toExternalForm();
     private SObjectType metadataType;
     private List<String> keyFields;
+    @TestVisible
+    private static List<SObject> dummyMetadataRecords;
 
-    private SObjectIndex metadataIndex {get {
-        if(metadataIndex == null) {
-            metadataIndex = new SObjectIndex(keyFields);
-
-            DescribeSObjectResult metadataTypeDescribe = metadataType.getDescribe();
-            Map<String, SObjectField> fieldMap = metadataTypeDescribe.fields.getMap();
-            List<String> fields = new List<String>(fieldMap.keySet());
-            String orgDomainField;
-            for(String thisFieldName : fields) {
-                DescribeFieldResult thisFieldDescribe = fieldMap.get(thisFieldName).getDescribe();
-                if(thisFieldDescribe.referenceTo.contains(Environment__mdt.SObjectType)) {
-                    orgDomainField = thisFieldName.replace('__c', '__r.') + Environment__mdt.Org_Domain_URL__c.getDescribe().name;
-                }
+    private SObjectIndex metadataIndex {
+        get {
+            if(metadataIndex == null) {
+                metadataIndex = new SObjectIndex(keyFields)
+                        .putAll(dummyMetadataRecords != null ? dummyMetadataRecords : getMetadataRecords());
             }
-            // Note: Custom Metadata can't order by NULLS LAST, so we have to sort afterwards
-            List<SObject> metadataList = Database.query(
-                    'SELECT ' + String.join(fields, ', ') + ', ' + orgDomainField
-                            + ' FROM ' + metadataTypeDescribe.getName()
-                            + ' WHERE ' + orgDomainField + ' = :orgDomainUrl'
-                            + ' OR ' + orgDomainField + ' = NULL'
-            );
-
-            Lists.sort(metadataList, new NullsLastComparator(orgDomainField));
-            metadataIndex.putAll(metadataList);
+            return metadataIndex;
         }
-        return metadataIndex;
+        set;
     }
-    set; }
 
     global EnvironmentMetadata(SObjectType metadataType) {
         this.metadataType = metadataType;
@@ -77,5 +62,46 @@ global inherited sharing class EnvironmentMetadata {
 
     global SObject get(Map<String, Object> key) {
         return metadataIndex.get(key);
+    }
+
+    private List<SObject> getMetadataRecords() {
+        DescribeSObjectResult metadataTypeDescribe = metadataType.getDescribe();
+        Map<String, SObjectField> fieldMap = metadataTypeDescribe.fields.getMap();
+        List<String> fields = new List<String>(fieldMap.keySet());
+
+        String orgDomainField = (String)new LazyIterator(fields)
+                .filter(new IsReferenceToEnvironment(fieldMap))
+                .mapValues(new MakeReferenceToOrgDomain())
+                .firstOrDefault(null);
+
+        // Note: Custom Metadata can't order by NULLS LAST, so we have to sort afterwards
+        List<SObject> metadataList = Database.query(
+                'SELECT ' + String.join(fields, ', ') + ', ' + orgDomainField
+                        + ' FROM ' + metadataTypeDescribe.getName()
+                        + ' WHERE ' + orgDomainField + ' = :orgDomainUrl'
+                        + ' OR ' + orgDomainField + ' = NULL'
+        );
+
+        return (List<SObject>)Lists.sort(metadataList, new NullsLastComparator(orgDomainField));
+    }
+
+    private class IsReferenceToEnvironment implements BooleanFunction {
+
+        private Map<String, SObjectField> fieldMap;
+
+        public IsReferenceToEnvironment(Map<String, SObjectField> fieldMap) {
+            this.fieldMap = fieldMap;
+        }
+
+        public Boolean isTrueFor(Object o) {
+            return fieldMap.get((String)o).getDescribe().referenceTo.contains(Environment__mdt.SObjectType);
+        }
+    }
+
+    private class MakeReferenceToOrgDomain implements Function {
+
+        public String call(Object o) {
+            return ((String)o).replace('__c', '__r.') + Environment__mdt.Org_Domain_URL__c.getDescribe().name;
+        }
     }
 }
