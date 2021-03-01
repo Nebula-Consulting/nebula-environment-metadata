@@ -16,6 +16,7 @@ global inherited sharing class EnvironmentMetadata {
     private SObjectIndex metadataIndex {
         get {
             if(metadataIndex == null) {
+                System.assert(!keyFields.isEmpty(), 'You must set some key fields in the constructor or by calling addKeyField(SObjectField field)');
                 metadataIndex = new SObjectIndex(keyFields)
                         .putAll(getMetadataRecords());
             }
@@ -34,12 +35,12 @@ global inherited sharing class EnvironmentMetadata {
         this.keyFields = new List<String>{ keyField.getDescribe().name };
     }
 
-    global EnvironmentMetadata addField(SObjectField field) {
+    global EnvironmentMetadata addKeyField(SObjectField field) {
         keyFields.add(field.getDescribe().name);
         return this;
     }
 
-    global EnvironmentMetadata overrideEnvironment(String orgDomainUrl) {
+    global EnvironmentMetadata overrideOrgDomainUrl(String orgDomainUrl) {
         this.orgDomainUrl = orgDomainUrl;
         return this;
     }
