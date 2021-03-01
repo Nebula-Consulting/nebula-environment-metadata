@@ -29,8 +29,6 @@ implementation, so it can be whatever you find to be descriptive. The Org Domain
 
 The environment with no Org Domain URL is regarded as the default, irrespective of its name. 
 
-So, when a property is accessed, the default is read first and then overridden
-
 ### Custom Metadata Type: Property
 
 Properties are for unstructured metadata in a basic `key: value` form. So, they may be the sort of thing you would think 
@@ -63,7 +61,7 @@ then that record is returned. If there is a record in an Environment with no Org
 ## Apex Interface
 
 Of course, you may query the metadata records directly. Convenience methods are provided which respect the rules of 
-matching described above. The methods can give you all the metadata for the current environment or read a key at a time.
+matching described above. These methods can give you all the metadata for the current environment or read a key at a time.
 
 ### Apex Interface: Properties
 
@@ -82,12 +80,24 @@ SObjectType of the metadata, and the key e.g.
 
     EnvironmentMetadata myEnvironmentMetadata = new EnvironmentMetadata(My_Type__mdt.SObjectType, My_Type__mdt.Key__c);
 
+OR
+
+    EnvironmentMetadata myEnvironmentMetadata = new EnvironmentMetadata(My_Type__mdt.SObjectType)
+        .addKeyField(My_Type__mdt.Key_1__c)
+        .addKeyField(My_Type__mdt.Key_2__c);
+
+
 EnvironmentMetadata will examine the types to find how it is linked to Environment. You may then read records with 
 values on the key:
 
     My_Type__mdt record = (My_Type__mdt)myEnvironmentMetadata.get(key);
+    My_Type__mdt record = (My_Type__mdt)myEnvironmentMetadata.get(new My_Type__mdt(Key_1__c = val1, Key_2__c = val2));
+    My_Type__mdt record = (My_Type__mdt)myEnvironmentMetadata.get(new Map<String, Object>{'Key_1__c' => val1, 'Key_2__c' => val2});
 
-Or get all of them for this environment:
+Where the `key` could be a single value (if there is only one key field), or an SObject with the key fields filled in, or
+a map with the key fields in.
+
+Or get all metadata records for this environment:
 
     List<My_Type__mdt> records = myEnvironmentMetadata.getAll();
 
