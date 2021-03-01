@@ -11,7 +11,7 @@ global inherited sharing class EnvironmentMetadata {
     private SObjectType metadataType;
     private List<String> keyFields;
     @TestVisible
-    private static List<SObject> dummyMetadataRecords;
+    private DatabaseConnection databaseConnection = new DatabaseConnectionReal();
 
     private SObjectIndex metadataIndex {
         get {
@@ -75,12 +75,12 @@ global inherited sharing class EnvironmentMetadata {
                 .firstOrDefault(null);
 
         // Note: Custom Metadata can't order by NULLS LAST, so we have to sort afterwards
-        List<SObject> metadataList = dummyMetadataRecords != null ? dummyMetadataRecords : Database.query(
+        List<SObject> metadataList = databaseConnection.query(
                 'SELECT ' + String.join(fields, ', ') + ', ' + orgDomainField
                         + ' FROM ' + metadataTypeDescribe.getName()
                         + ' WHERE ' + orgDomainField + ' = :orgDomainUrl'
-                        + ' OR ' + orgDomainField + ' = NULL'
-        );
+                        + ' OR ' + orgDomainField + ' = NULL',
+        orgDomainUrl);
 
         return (List<SObject>)Lists.sort(metadataList, new NullsLastComparator(orgDomainField));
     }
@@ -102,6 +102,18 @@ global inherited sharing class EnvironmentMetadata {
 
         public String call(Object o) {
             return ((String)o).replace('__c', '__r.') + Environment__mdt.Org_Domain_URL__c.getDescribe().name;
+        }
+    }
+
+    @TestVisible
+    private interface DatabaseConnection {
+        List<SObject> query(String query, String orgDomainUrl);
+    }
+
+    private class DatabaseConnectionReal implements DatabaseConnection {
+
+        public List<SObject> query(String query, String orgDomainUrl) {
+            return Database.query(query);
         }
     }
 }

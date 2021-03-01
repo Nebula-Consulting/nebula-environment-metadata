@@ -12,10 +12,11 @@ private class EnvironmentPropertiesDummyTest {
 
     @IsTest
     static void specific() {
-        EnvironmentMetadata.dummyMetadataRecords = new List<Property__mdt> {
-                new Property__mdt(DeveloperName = 'Default', Key__c = 'My_Label', Value__c = defaultValue),
-                new Property__mdt(DeveloperName = 'Specific', Key__c = 'My_Label', Value__c = specificValue)
-        };
+        EnvironmentProperties.environmentProperties.databaseConnection =
+                new EnvironmentMetadataTest.DatabaseConnectionMock(new List<Property__mdt> {
+                        new Property__mdt(DeveloperName = 'Default', Key__c = 'My_Label', Value__c = defaultValue),
+                        new Property__mdt(DeveloperName = 'Specific', Key__c = 'My_Label', Value__c = specificValue)
+                });
 
         String value = EnvironmentProperties.get('My_Label');
         System.assertEquals(specificValue, value);
@@ -23,9 +24,10 @@ private class EnvironmentPropertiesDummyTest {
 
     @IsTest
     static void default() {
-        EnvironmentMetadata.dummyMetadataRecords = new List<Property__mdt> {
-                new Property__mdt(DeveloperName = 'Default', Key__c = 'My_Label', Value__c = defaultValue)
-        };
+        EnvironmentProperties.environmentProperties.databaseConnection =
+                new EnvironmentMetadataTest.DatabaseConnectionMock(new List<Property__mdt> {
+                        new Property__mdt(DeveloperName = 'Default', Key__c = 'My_Label', Value__c = defaultValue)
+                });
 
         String value = EnvironmentProperties.get('My_Label');
         System.assertEquals(defaultValue, value);
