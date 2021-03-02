@@ -19,7 +19,13 @@ public class EnvironmentMetadataTest {
                 new Property__mdt(DeveloperName = 'Default', Key__c = 'My_Label', Value__c = defaultValue, Environment__r = defaultEnvironment),
                 new Property__mdt(DeveloperName = 'Specific', Key__c = 'My_Label', Value__c = specificValue, Environment__r = specificEnvironment)
         })
-                .addQueryFragmentToAssert('nebc__Environment__r.nebc__Org_Domain_URL__c');
+                .addQueryFragmentToAssert(Property__mdt.Environment__c.getDescribe().name.replace('__c', '__r') + '.' + Environment__mdt.Org_Domain_URL__c.getDescribe().name)
+                .addQueryFragmentToAssert(Property__mdt.Environment__c.getDescribe().name)
+                .addQueryFragmentToAssert(Property__mdt.Key__c.getDescribe().name)
+                .addQueryFragmentToAssert(Property__mdt.Value__c.getDescribe().name)
+                .addQueryFragmentToAssert(Property__mdt.DeveloperName.getDescribe().name)
+                .addQueryFragmentToAssert(Property__mdt.MasterLabel.getDescribe().name)
+                .addQueryFragmentToAssert(Property__mdt.QualifiedApiName.getDescribe().name);
 
         String value = ((Property__mdt)environmentMetadata.get('My_Label')).Value__c;
         System.assertEquals(specificValue, value);
