@@ -13,7 +13,16 @@ changing, and also for the situation where you don't need a different value for 
 
 ## The Custom Metadata
 
-There are two custom metadata types defined here:
+There are two custom metadata types defined here: Environment, and Property. One environment has many properties, and 
+the properties are where actual values are stored e.g. for storing two properties, "Remote" and "Currency", in two 
+environments, "Production" and "UAT", the records may be organised like this:
+
+  - Environment: Production
+    - Property: Remote = https://livesystem.com
+    - Property: Currency = USD
+  - Environment: UAT
+      - Property: Remote = https://uat.livesystem.com
+      - Property: Currency = GBP
 
 ### Custom Metadata Type: Environment
 
