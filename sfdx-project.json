@@ -4,8 +4,8 @@
             "path": "force-app",
             "default": false,
             "package": "Nebula Environment Metadata",
-            "versionName": "1.1.0",
-            "versionNumber": "1.1.0.NEXT",
+            "versionName": "1.2.0",
+            "versionNumber": "1.2.0.NEXT",
             "dependencies": [
                 {
                     "package": "Nebula Core"
@@ -24,6 +24,7 @@
         "Nebula Environment Metadata": "0Ho6M0000008OKBSA2",
         "Nebula Core": "04t6M000000kmDsQAI",
         "Nebula Environment Metadata@1.0.0-1": "04t6M000000km71QAA",
-        "Nebula Environment Metadata@1.1.0-1": "04t6M000000kmDdQAI"
+        "Nebula Environment Metadata@1.1.0-1": "04t6M000000kmDdQAI",
+        "Nebula Environment Metadata@1.2.0-2": "04t6M000000kmFUQAY"
     }
 }

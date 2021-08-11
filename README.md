@@ -2,7 +2,7 @@
 
 Provides a method to store property values in metadata so that each environment (production, sandbox, scratch org, etc)
 can have its own value. These values can all be stored simultaneously, and accessed transparently via an Apex
-API.
+APIs in Apex itself, LWC, and Flow.
 
 Environments are specified via their base URL e.g. https://company.my.salesforce.com for production or 
 https://company--uat.my.salesforce.com for UAT. This works best for companies using My Domain and it's a 
@@ -10,6 +10,11 @@ workaround for the inability to detect the current sandbox name from Apex.
 
 A default configuration may exist with no URL specified. This allows for scratch orgs where the actual URL will keep 
 changing, and also for the situation where you don't need a different value for each environment.
+
+# Installation
+
+  - URL: /packaging/installPackage.apexp?p0=04t6M000000kmFUQAY
+  - SFDX project as "Nebula Environment Metadata": "04t6M000000kmFUQAY"
 
 ## The Custom Metadata
 
@@ -25,6 +30,8 @@ environments, "Production" and "UAT", the records may be organised like this:
       - Property: Currency = GBP
 
 ### Custom Metadata Type: Environment
+
+Example data:
 
 | Name | Org Domain URL |
 | --- | --- |
@@ -111,3 +118,15 @@ Or get all metadata records for this environment:
     List<My_Type__mdt> records = myEnvironmentMetadata.getAll();
 
 The returned list will be for this environment and also unique based on your supplied key. 
+
+### Apex Interface: LWC
+
+[EnvironmentPropertiesLwc](force-app/main/default/classes/EnvironmentPropertiesLwc.cls) provides two `AuraEnabled` 
+methods to access the properties. You can use `get(key)` to get a single property or `getAll()` to get all current
+keys/values as a map/Javascript object.
+
+### Apex Interface: Flow
+
+[FlowEnvironmentProperty.getProperty()](force-app/main/default/classes/FlowEnvironmentProperty.cls) provides access to
+the properties in Flow. You will find it as an Apex Action called "Get Environment Property" under the category 
+"Configuration".
