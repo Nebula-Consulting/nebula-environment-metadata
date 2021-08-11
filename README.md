@@ -11,7 +11,7 @@ workaround for the inability to detect the current sandbox name from Apex.
 A default configuration may exist with no URL specified. This allows for scratch orgs where the actual URL will keep 
 changing, and also for the situation where you don't need a different value for each environment.
 
-# Installation
+## Installation
 
   - URL: /packaging/installPackage.apexp?p0=04t6M000000kmFUQAY
   - SFDX project as "Nebula Environment Metadata": "04t6M000000kmFUQAY"
