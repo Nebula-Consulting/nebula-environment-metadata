@@ -16,7 +16,8 @@ global inherited sharing class EnvironmentMetadata {
     private SObjectIndex metadataIndex {
         get {
             if(metadataIndex == null) {
-                System.assert(!keyFields.isEmpty(), 'You must set some key fields in the constructor or by calling addKeyField(SObjectField field)');
+                Assertion.is('You must set some key fields in the constructor or by calling addKeyField(SObjectField field)')
+                        .that(!keyFields.isEmpty());
                 metadataIndex = new SObjectIndex(keyFields)
                         .putAll(getMetadataRecords());
             }
@@ -81,7 +82,7 @@ global inherited sharing class EnvironmentMetadata {
                         + ' FROM ' + metadataTypeDescribe.getName()
                         + ' WHERE ' + orgDomainField + ' = :orgDomainUrl'
                         + ' OR ' + orgDomainField + ' = NULL',
-        orgDomainUrl);
+                orgDomainUrl);
 
         return (List<SObject>)Lists.sort(metadataList, new NullsLastComparator(orgDomainField));
     }

@@ -13,6 +13,17 @@ public class EnvironmentMetadataTest {
     static Environment__mdt specificEnvironment = new Environment__mdt(Org_Domain_URL__c = specificOrgDomainUrl);
 
     @IsTest
+    static void noKeysThrowsException() {
+        try {
+            new EnvironmentMetadata(Property__mdt.SObjectType).getAll();
+        } catch (AssertionException e) {
+            Assertion.is.that(e.getMessage()).contains('You must set some key fields in the constructor or by calling addKeyField(SObjectField field)');
+            return;
+        }
+        Assert.isTrue(false, 'Should have thrown an exception');
+    }
+
+    @IsTest
     static void specific() {
         EnvironmentMetadata environmentMetadata = new EnvironmentMetadata(Property__mdt.SObjectType, Property__mdt.Key__c);
         environmentMetadata.databaseConnection = new DatabaseConnectionMock(new List<Property__mdt>{
