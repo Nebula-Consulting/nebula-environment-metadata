@@ -7,6 +7,11 @@ environment.
 This library provides an API to access values so that code using it will automatically read whichever 
 value is relevant for the current environment. It's like having environment variables stored directly on the platform!
 
+## Installation
+
+- URL: /packaging/installPackage.apexp?p0=04t6M000000gazOQAQ
+- SFDX project as "Nebula Environment Metadata": "04t6M000000gazOQAQ"
+
 ## Why?
 
 Values may have to be different between different environments. Say, for example, you have an integration to an 
@@ -37,11 +42,6 @@ possible to get a sandbox name using the Domain class, that still returns null f
 
 A default configuration may exist with no URL specified. This allows for scratch orgs where the actual URL will keep 
 changing, and also for the situation where you don't need a different value for each environment.
-
-## Installation
-
-  - URL: /packaging/installPackage.apexp?p0=04t6M000000kmFUQAY
-  - SFDX project as "Nebula Environment Metadata": "04t6M000000kmFUQAY"
 
 ## The Custom Metadata
 
