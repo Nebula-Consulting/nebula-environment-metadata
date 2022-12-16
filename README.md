@@ -1,12 +1,39 @@
 # Nebula Environment Metadata
 
-Provides a method to store property values in metadata so that each environment (production, sandbox, scratch org, etc)
-can have its own value. These values can all be stored simultaneously, and accessed transparently via an Apex
-APIs in Apex itself, LWC, and Flow.
+Provides a method to store metadata values so that each environment (production, sandbox, scratch org, etc)
+can have its own version of the value. These values can all be stored together in source control and exist in every 
+environment. 
+
+This library provides an API to access values so that code using it will automatically read whichever 
+value is relevant for the current environment. It's like having environment variables stored directly on the platform!
+
+## Why?
+
+Values may have to be different between different environments. Say, for example, you have an integration to an 
+external system. You would not want a sandbox Salesforce environment to access the production instance of the external 
+system. So, you can have a Named Credential for the production external system and separate Named Credential for the 
+sandbox. 
+
+Apex code calling the external system can then read an 
+Environment Metadata Property to specify which Named Credential to use. 
+
+Both Named Credentials and both Environment Metadata Properties exist in production. As soon as you make a 
+new sandbox, the sandbox will automatically switch to using the sandbox version of the Named Credential.
+
+## What can I store?
+
+This package includes a Custom Metadata Type called Environment for specifying each of your environments. It also 
+includes Property for storing basic key-value pairs for each environment. 
+
+You can also add a Lookup field from your 
+own Custom Metadata Type to Environment. And then use the API here to get the right metadata records for whichever 
+environment your code is running in. 
+
+## How do I specify environments?
 
 Environments are specified via their base URL e.g. https://company.my.salesforce.com for production or 
-https://company--uat.my.salesforce.com for UAT. This works best for companies using My Domain and it's a 
-workaround for the inability to detect the current sandbox name from Apex.  
+https://company--uat.my.salesforce.com for UAT. This works best for companies using My Domain. Although it's now 
+possible to get a sandbox name using the Domain class, that still returns null for scratch orgs.  
 
 A default configuration may exist with no URL specified. This allows for scratch orgs where the actual URL will keep 
 changing, and also for the situation where you don't need a different value for each environment.
@@ -18,8 +45,10 @@ changing, and also for the situation where you don't need a different value for 
 
 ## The Custom Metadata
 
-There are two custom metadata types defined here: Environment, and Property. One environment has many properties, and 
-the properties are where actual values are stored e.g. for storing two properties, "Remote" and "Currency", in two 
+There are two custom metadata types defined here: Environment, and Property. 
+
+One environment has many properties, and 
+the properties are where individual values are stored e.g. for storing two properties, "Remote" and "Currency", in two 
 environments, "Production" and "UAT", the records may be organised like this:
 
   - Environment: Production
@@ -33,13 +62,13 @@ environments, "Production" and "UAT", the records may be organised like this:
 
 Example data:
 
-| Name | Org Domain URL |
-| --- | --- |
-| Production | https://company.my.salesforce.com |
-| UAT | https://company--uat.my.salesforce.com |
-| Default |  |
+| Name       | Org Domain URL                         |
+|------------|----------------------------------------|
+| Production | https://company.my.salesforce.com      |
+| UAT        | https://company--uat.my.salesforce.com |
+| Default    |                                        |
 
-Each environment record serves simply as a reference for other metadata. The Name is not significant to the 
+Each environment record serves as a reference for other metadata. The Name is not significant to the 
 implementation, so it can be whatever you find to be descriptive. The Org Domain URL must match the value returned by 
 `Url.getOrgDomainUrl().toExternalForm()` in the org where you want the setting to be active.
 
@@ -53,10 +82,10 @@ of storing in a hierarchy custom setting or label. If you want to store lists of
 
 Their structure is simple, for example:
 
-| Name | Key | Value | Environment | 
-| --- | --- | --- | --- |
-| My Label: Production | My_Label | Production Value | Production |
-| My Label: UAT | My_Label | UAT Value | UAT |
+| Name                 | Key      | Value            | Environment | 
+|----------------------|----------|------------------|-------------|
+| My Label: Production | My_Label | Production Value | Production  |
+| My Label: UAT        | My_Label | UAT Value        | UAT         |
 
 Name can be anything you want. Environment is a reference to an instance of the Environment custom metadata type. Keys 
 must match for items you consider to be the same.
@@ -69,10 +98,14 @@ your current environment.
 
 ## Matching values in environments
 
-Values in environments are matched by looking at their Environment reference and the Org Domain URL within it. 
+Values in environments are matched by looking at their Environment reference and the Org Domain URL within it. Matching
+happens in order of preference
 
-If there is a custom metadata record associated with an Environment that matches `Url.getOrgDomainUrl().toExternalForm()`,
-then that record is returned. If there is a record in an Environment with no Org Domain URL set, then that record is returned.
+1. If there is a custom metadata record associated with an Environment that matches `Url.getOrgDomainUrl().toExternalForm()`,
+   then that record is returned.
+2. If there is a record in an Environment with no Org Domain URL set, then that record is returned.
+3. Otherwise, nothing is returned. This form that "nothing" takes depends on the API you use to access the property
+ 
 
 ## Apex Interface
 
@@ -83,7 +116,7 @@ matching described above. These methods can give you all the metadata for the cu
 
 Metadata stored in the Property custom metadata type can be read via the [EnvironmentProperties](force-app/main/default/classes/EnvironmentProperties.cls) class e.g.
 
-    EnvironmentProperties.get('My_Label')
+    nebc.EnvironmentProperties.get('My_Label')
 
 ### Apex Interface: Other Custom Metadata Types
 
@@ -94,11 +127,11 @@ The custom metadata type must have a key (it can be compound key across multiple
 notion of overriding doesn't make sense. When you construct an instance of EnvironmentMetadata, you must supply the 
 SObjectType of the metadata, and the key e.g.
 
-    EnvironmentMetadata myEnvironmentMetadata = new EnvironmentMetadata(My_Type__mdt.SObjectType, My_Type__mdt.Key__c);
+    nebc.EnvironmentMetadata myEnvironmentMetadata = new nebc.EnvironmentMetadata(My_Type__mdt.SObjectType, My_Type__mdt.Key__c);
 
 OR
 
-    EnvironmentMetadata myEnvironmentMetadata = new EnvironmentMetadata(My_Type__mdt.SObjectType)
+    nebc.EnvironmentMetadata myEnvironmentMetadata = new nebc.EnvironmentMetadata(My_Type__mdt.SObjectType)
         .addKeyField(My_Type__mdt.Key_1__c)
         .addKeyField(My_Type__mdt.Key_2__c);
 
