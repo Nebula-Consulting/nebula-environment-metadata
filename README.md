@@ -9,8 +9,8 @@ value is relevant for the current environment. It's like having environment vari
 
 ## Installation
 
-- URL: /packaging/installPackage.apexp?p0=04t6M000000gazOQAQ
-- SFDX project as "Nebula Environment Metadata": "04t6M000000gazOQAQ"
+- URL: /packaging/installPackage.apexp?p0=04tQB000000EqTNYA0
+- SFDX project as "Nebula Environment Metadata": "04tQB000000EqTNYA0"
 
 ## Why?
 
@@ -37,7 +37,7 @@ environment your code is running in.
 ## How do I specify environments?
 
 Environments are specified via their base URL e.g. https://company.my.salesforce.com for production or 
-https://company--uat.my.salesforce.com for UAT. This works best for companies using My Domain. Although it's now 
+https://company--uat.sandbox.my.salesforce.com for UAT. This works best for companies using My Domain. Although it's now 
 possible to get a sandbox name using the Domain class, that still returns null for scratch orgs.  
 
 A default configuration may exist with no URL specified. This allows for scratch orgs where the actual URL will keep 
@@ -62,15 +62,15 @@ environments, "Production" and "UAT", the records may be organised like this:
 
 Example data:
 
-| Name       | Org Domain URL                         |
-|------------|----------------------------------------|
-| Production | https://company.my.salesforce.com      |
-| UAT        | https://company--uat.my.salesforce.com |
-| Default    |                                        |
+| Name       | Org Domain URL                                 |
+|------------|------------------------------------------------|
+| Production | https://company.my.salesforce.com              |
+| UAT        | https://company--uat.sandbox.my.salesforce.com |
+| Default    |                                                |
 
 Each environment record serves as a reference for other metadata. The Name is not significant to the 
 implementation, so it can be whatever you find to be descriptive. The Org Domain URL must match the value returned by 
-`Url.getOrgDomainUrl().toExternalForm()` in the org where you want the setting to be active.
+`Url.getOrgDomainUrl().toExternalForm()`, `DomainCreator.getOrgMyDomainHostname()` or the just the mydomain subdomain in the org where you want the setting to be active.
 
 The environment with no Org Domain URL is regarded as the default, irrespective of its name. 
 
