@@ -7,7 +7,10 @@
 
 global inherited sharing class EnvironmentMetadata {
 
-    private String orgDomainUrl = Url.getOrgDomainUrl().toExternalForm();
+    private String orgMyDomainHostname = DomainCreator.getOrgMyDomainHostname();
+    private String orgDomainUrl = 'https://' + orgMyDomainHostname;
+    private String orgMyDomainName = DomainParser.parse(orgMyDomainHostname).getMyDomainName();
+
     private SObjectType metadataType;
     private List<String> keyFields;
     @TestVisible
@@ -79,11 +82,14 @@ global inherited sharing class EnvironmentMetadata {
 
         // Note: Custom Metadata can't order by NULLS LAST, so we have to sort afterwards
         List<SObject> metadataList = databaseConnection.query(
-                'SELECT ' + String.join(fields, ', ') + ', ' + orgDomainField
-                        + ' FROM ' + metadataTypeDescribe.getName()
-                        + ' WHERE ' + orgDomainField + ' = :orgDomainUrl'
-                        + ' OR ' + orgDomainField + ' = NULL',
-                orgDomainUrl);
+            new QueryBuilder(metadataTypeDescribe.getName())
+                .addFields(fields)
+                .addField(orgDomainField)
+                .setWhereClause(orgDomainField + ' IN :orgDomains')
+                .getQuery(),
+            new Map<String, Object>{
+                'orgDomains' => new Set<String>{ orgDomainUrl, orgMyDomainName, orgMyDomainHostname, null}
+            });
 
         return (List<SObject>)Lists.sort(metadataList, new NullsLastComparator(orgDomainField));
     }
@@ -110,13 +116,13 @@ global inherited sharing class EnvironmentMetadata {
 
     @TestVisible
     private interface DatabaseConnection {
-        List<SObject> query(String query, String orgDomainUrl);
+        List<SObject> query(String query, Map<String, Object> binds);
     }
 
-    private class DatabaseConnectionReal implements DatabaseConnection {
+    private inherited sharing class DatabaseConnectionReal implements DatabaseConnection {
 
-        public List<SObject> query(String query, String orgDomainUrl) {
-            return Database.query(query);
+        public List<SObject> query(String query, Map<String, Object> binds) {
+            return Database.queryWithBinds(query, binds, AccessLevel.SYSTEM_MODE);
         }
     }
 }
