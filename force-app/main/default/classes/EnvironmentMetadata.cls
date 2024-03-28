@@ -41,7 +41,8 @@ global inherited sharing class EnvironmentMetadata {
         return this;
     }
 
-    global EnvironmentMetadata overrideOrgDomainUrl(String orgDomainUrl) {
+    @TestVisible
+    private EnvironmentMetadata overrideOrgDomainUrl(String orgDomainUrl) {
         this.orgDomainUrl = orgDomainUrl;
         return this;
     }
