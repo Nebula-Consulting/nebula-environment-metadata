@@ -2,10 +2,10 @@
   "packageDirectories": [
     {
       "path": "force-app",
-      "default": false,
+      "default": true,
       "package": "Nebula Environment Metadata",
-      "versionName": "1.3.0",
-      "versionNumber": "1.3.0.NEXT",
+      "versionName": "1.4.0",
+      "versionNumber": "1.4.0.NEXT",
       "dependencies": [
         {
           "package": "Nebula Core"
@@ -14,7 +14,7 @@
     },
     {
       "path": "unPackaged",
-      "default": true
+      "default": false
     }
   ],
   "namespace": "nebc",
@@ -26,6 +26,7 @@
     "Nebula Environment Metadata@1.0.0-1": "04t6M000000km71QAA",
     "Nebula Environment Metadata@1.1.0-1": "04t6M000000kmDdQAI",
     "Nebula Environment Metadata@1.2.0-2": "04t6M000000kmFUQAY",
-    "Nebula Environment Metadata@1.3.0-1": "04t6M000000gazOQAQ"
+    "Nebula Environment Metadata@1.3.0-1": "04t6M000000gazOQAQ",
+    "Nebula Environment Metadata@1.4.0-1": "04tQB000000EqTNYA0"
   }
 }
