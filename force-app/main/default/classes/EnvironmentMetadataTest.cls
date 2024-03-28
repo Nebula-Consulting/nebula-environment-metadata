@@ -97,7 +97,7 @@ public class EnvironmentMetadataTest {
             return this;
         }
 
-        public List<SObject> query(String query, String orgDomainUrl) {
+        public List<SObject> query(String query, Map<String, Object> binds) {
             for(String thisQueryFragment : queryFragmentsToAssert) {
                 System.assert(query.containsIgnoreCase(thisQueryFragment), String.format('"{0}" not found in query string "{1}"', new List<String>{thisQueryFragment, query}));
             }
