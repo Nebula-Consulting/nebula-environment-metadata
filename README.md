@@ -209,9 +209,9 @@ happens in order of preference:
    then that record is returned.
 2. **Default environment**: If there is a record in an Environment with no Org Domain URL set, then that record is returned.
 3. **No match**: Otherwise, nothing is returned. The form that "nothing" takes depends on the API you use to access the property:
-   - `EnvironmentProperties.get()` returns `null`
-   - `EnvironmentMetadata.get()` returns `null`
-   - `EnvironmentMetadata.getAll()` returns an empty list
+   - `nebc.EnvironmentProperties.get()` returns `null`
+   - `nebc.EnvironmentMetadata.get()` returns `null`
+   - `nebc.EnvironmentMetadata.getAll()` returns an empty list
 
 **Example Matching Logic:**
 
