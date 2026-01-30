@@ -419,7 +419,7 @@ export default class MyComponent extends LightningElement {
 
 ```javascript
 import { LightningElement } from 'lwc';
-import getEnvironmentProperty from '@salesforce/apex/EnvironmentPropertiesLwc.get';
+import getEnvironmentProperty from '@salesforce/apex/nebc.EnvironmentPropertiesLwc.get';
 
 export default class MyComponent extends LightningElement {
     async loadProperty() {
