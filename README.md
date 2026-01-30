@@ -10,7 +10,7 @@ value is relevant for the current environment. It's like having environment vari
 ## Table of Contents
 
 - [Installation](#installation)
-- [Why Use This Package?](#why)
+- [Why?](#why)
 - [What Can I Store?](#what-can-i-store)
 - [How Do I Specify Environments?](#how-do-i-specify-environments)
 - [The Custom Metadata](#the-custom-metadata)
@@ -32,7 +32,7 @@ value is relevant for the current environment. It's like having environment vari
 
 ### Package Installation URL
 
-Install the latest version (1.4.0) using this URL:
+Install the latest version using this URL:
 ```
 https://login.salesforce.com/packaging/installPackage.apexp?p0=04tQB000000EqTNYA0
 ```
@@ -41,6 +41,8 @@ For sandbox environments:
 ```
 https://test.salesforce.com/packaging/installPackage.apexp?p0=04tQB000000EqTNYA0
 ```
+
+**Note:** The package ID above (`04tQB000000EqTNYA0`) points to version 1.4.0. Check the [releases](https://github.com/Nebula-Consulting/nebula-environment-metadata/releases) for the latest available version.
 
 ### SFDX/Salesforce CLI Installation
 
@@ -381,8 +383,8 @@ global static Map<String, String> getAll()
 
 ```javascript
 import { LightningElement, wire } from 'lwc';
-import getEnvironmentProperty from '@salesforce/apex/nebc.EnvironmentPropertiesLwc.get';
-import getAllEnvironmentProperties from '@salesforce/apex/nebc.EnvironmentPropertiesLwc.getAll';
+import getEnvironmentProperty from '@salesforce/apex/EnvironmentPropertiesLwc.get';
+import getAllEnvironmentProperties from '@salesforce/apex/EnvironmentPropertiesLwc.getAll';
 
 export default class MyComponent extends LightningElement {
     apiEndpoint;
@@ -417,7 +419,7 @@ export default class MyComponent extends LightningElement {
 
 ```javascript
 import { LightningElement } from 'lwc';
-import getEnvironmentProperty from '@salesforce/apex/nebc.EnvironmentPropertiesLwc.get';
+import getEnvironmentProperty from '@salesforce/apex/EnvironmentPropertiesLwc.get';
 
 export default class MyComponent extends LightningElement {
     async loadProperty() {
@@ -434,7 +436,8 @@ export default class MyComponent extends LightningElement {
 **Notes:**
 - Both methods are marked as `Cacheable=true`, making them suitable for use with `@wire`
 - The `getAll()` method returns a JavaScript object/map where keys are property keys and values are property values
-- Remember to use the namespace prefix `nebc` when importing
+- When importing from a managed package, reference the class name directly without the namespace prefix (e.g., `EnvironmentPropertiesLwc`). The namespace is handled automatically by the Salesforce platform when the package is installed.
+- In Apex code, you must use the namespace prefix: `nebc.EnvironmentProperties.get('key')`
 
 ### Apex Interface: Flow
 
@@ -555,8 +558,9 @@ In Flow Builder, if you pass a collection of keys, you'll receive a collection o
 - Run this in Anonymous Apex to see your org's URLs:
   ```apex
   System.debug('getOrgDomainUrl: ' + Url.getOrgDomainUrl().toExternalForm());
-  System.debug('getOrgMyDomainHostname: ' + DomainCreator.getOrgMyDomainHostname());
+  System.debug('getOrgMyDomainHostname (from Nebula Core): ' + DomainCreator.getOrgMyDomainHostname());
   ```
+  Note: `DomainCreator.getOrgMyDomainHostname()` is a utility method from the Nebula Core dependency.
 - Ensure your Environment records use one of these exact formats
 - Consider using just the My Domain subdomain for sandbox environments
 
@@ -602,7 +606,7 @@ In Flow Builder, if you pass a collection of keys, you'll receive a collection o
 
 ### Access Level
 
-All queries execute in **SYSTEM_MODE** (via `Database.queryWithBinds()` with `AccessLevel.SYSTEM_MODE`), which means:
+Queries in the **EnvironmentMetadata** class execute in **SYSTEM_MODE** (via `Database.queryWithBinds()` with `AccessLevel.SYSTEM_MODE`). Since **EnvironmentProperties** and **EnvironmentPropertiesLwc** delegate to **EnvironmentMetadata**, they inherit this behavior. This means:
 - Users can access custom metadata regardless of their permissions
 - Custom metadata is configuration data meant to be accessible
 - FLS (Field-Level Security) and object permissions are bypassed
