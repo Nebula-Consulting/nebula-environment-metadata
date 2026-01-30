@@ -67,7 +67,7 @@ Add the package dependency to your `sfdx-project.json`:
 
 Or use the package ID directly: `04tQB000000EqTNYA0`
 
-**Note:** This package requires the **Nebula Core** package as a dependency, which will be automatically installed.
+**Note:** This package requires the **Nebula Core** package as a dependency, this must be manually installed.
 
 ## Why?
 
