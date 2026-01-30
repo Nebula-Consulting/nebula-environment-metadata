@@ -383,8 +383,8 @@ global static Map<String, String> getAll()
 
 ```javascript
 import { LightningElement, wire } from 'lwc';
-import getEnvironmentProperty from '@salesforce/apex/EnvironmentPropertiesLwc.get';
-import getAllEnvironmentProperties from '@salesforce/apex/EnvironmentPropertiesLwc.getAll';
+import getEnvironmentProperty from '@salesforce/apex/nebc.EnvironmentPropertiesLwc.get';
+import getAllEnvironmentProperties from '@salesforce/apex/nebc.EnvironmentPropertiesLwc.getAll';
 
 export default class MyComponent extends LightningElement {
     apiEndpoint;
