@@ -436,7 +436,7 @@ export default class MyComponent extends LightningElement {
 **Notes:**
 - Both methods are marked as `Cacheable=true`, making them suitable for use with `@wire`
 - The `getAll()` method returns a JavaScript object/map where keys are property keys and values are property values
-- When importing from a managed package, reference the class name directly without the namespace prefix (e.g., `EnvironmentPropertiesLwc`). The namespace is handled automatically by the Salesforce platform when the package is installed.
+- When importing from a managed package, reference the class name directly with the namespace prefix (e.g., `nebc.EnvironmentPropertiesLwc`).
 - In Apex code, you must use the namespace prefix: `nebc.EnvironmentProperties.get('key')`
 
 ### Apex Interface: Flow
